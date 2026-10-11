@@ -134,6 +134,43 @@ async function translateWithMyMemory(text, sourceLang, targetLang) {
   };
 }
 
+/**
+ * Helper: Translate using RapidAPI Google Translator
+ */
+async function translateWithRapidAPI(text, sourceLang, targetLang, apiKey) {
+  const url = 'https://google-translator9.p.rapidapi.com/v2';
+  const payload = {
+    q: text,
+    target: targetLang,
+    format: 'text'
+  };
+  if (sourceLang && sourceLang !== 'auto') {
+    payload.source = sourceLang;
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'x-rapidapi-key': apiKey,
+      'x-rapidapi-host': 'google-translator9.p.rapidapi.com',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || `RapidAPI error (${response.status})`);
+  }
+
+  const translation = data.data.translations[0];
+  return {
+    translatedText: translation.translatedText,
+    detectedSource: translation.detectedSourceLanguage || sourceLang,
+    provider: 'RapidAPI Google Translator'
+  };
+}
+
 // Endpoint: Translate
 app.post('/api/translate', async (req, res) => {
   try {
@@ -153,19 +190,23 @@ app.post('/api/translate', async (req, res) => {
       return res.status(400).json({ error: 'Text exceeds maximum limit of 5,000 characters.' });
     }
 
-    // Determine API Key priority: request body -> environment variable
-    const effectiveApiKey = apiKey || process.env.GOOGLE_TRANSLATE_API_KEY;
+    // Determine API Key priority
+    const effectiveApiKey = apiKey || process.env.GOOGLE_TRANSLATE_API_KEY || process.env.RAPIDAPI_KEY;
+    const isRapidApiKey = process.env.RAPIDAPI_KEY || (apiKey && !apiKey.startsWith('AIzaSy'));
 
     let result;
     if (effectiveApiKey) {
       try {
-        result = await translateWithGoogleCloud(trimmedText, sourceLang, targetLang, effectiveApiKey);
-      } catch (cloudErr) {
-        console.warn('Google Cloud Translation failed with provided key:', cloudErr.message);
-        // If provided key was specifically from user, return the error
+        if (isRapidApiKey) {
+          result = await translateWithRapidAPI(trimmedText, sourceLang, targetLang, effectiveApiKey);
+        } else {
+          result = await translateWithGoogleCloud(trimmedText, sourceLang, targetLang, effectiveApiKey);
+        }
+      } catch (keyErr) {
+        console.warn('API call failed with provided key:', keyErr.message);
         if (apiKey) {
           return res.status(401).json({
-            error: `API Key error: ${cloudErr.message}. Check your Google Cloud API key.`
+            error: `API Key error: ${keyErr.message}. Check your API key.`
           });
         }
         // Fallback to free engine if server's env key failed
