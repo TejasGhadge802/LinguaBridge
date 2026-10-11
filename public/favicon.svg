@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="linguaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded card -->
+  <rect width="64" height="64" rx="16" fill="url(#linguaGrad)" filter="url(#shadow)" />
+
+  <!-- Language Translation Icon (A & 文 / Chat symbol) -->
+  <g fill="#ffffff" transform="translate(11, 11) scale(0.65)">
+    <!-- Speech bubble outline & translation glyphs -->
+    <!-- Glyph 'A' -->
+    <path d="M19 12 L14 26 L17 26 L18.2 22.5 L23.8 22.5 L25 26 L28 26 L23 12 Z M21 15.5 L23.1 20.5 L18.9 20.5 Z" />
+    
+    <!-- Chinese/Asian Character '文' on right -->
+    <path d="M42 12 L38 12 L38 14 L49 14 L49 12 L45 12 L45 10 L42 10 Z M35 18 L33.5 19.8 C37.5 22.5 42 24.5 46.5 25.5 L48 23.5 C44 22.5 39.5 20.8 36.5 18 Z M45.5 17.5 C44 20.5 40 24 33 26.5 L34.5 28.5 C42 25.8 46.5 22 48.5 18 Z" />
+
+    <!-- Connecting translation curve / swap arrow -->
+    <path d="M15 36 C 22 44, 38 44, 46 36" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+    <polygon points="48,34 46,40 43,36" />
+    
+    <path d="M49 32 C 42 26, 26 26, 18 32" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+    <polygon points="16,34 18,28 21,32" opacity="0.8" />
+  </g>
+</svg>
