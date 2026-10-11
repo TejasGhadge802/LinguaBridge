@@ -233,5 +233,9 @@ function startServer(port) {
   });
 }
 
-startServer(Number(PORT));
+if (process.env.NODE_ENV !== 'production' || require.main === module) {
+  startServer(Number(PORT));
+}
+
+module.exports = app;
 
