@@ -80,27 +80,72 @@ async function translateWithGoogleCloud(text, sourceLang, targetLang, apiKey) {
 }
 
 /**
- * Helper: Translate using Google Translate Free Web Endpoint
+ * Helper 1: Google Chrome Client Endpoint (Most reliable, zero 429 rate limits)
  */
-async function translateWithGoogleFree(text, sourceLang, targetLang) {
+async function translateWithGoogleChromeClient(text, sourceLang, targetLang) {
+  const sl = sourceLang === 'auto' ? 'auto' : sourceLang;
+  const tl = targetLang;
+  const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${sl}&tl=${tl}&q=${encodeURIComponent(text)}`;
+
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Referer': 'https://translate.google.com/'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Google Chrome Client responded with status ${response.status}`);
+  }
+
+  const data = await response.json();
+  let translatedText = '';
+  let detectedSource = sourceLang;
+
+  if (Array.isArray(data)) {
+    if (Array.isArray(data[0])) {
+      translatedText = data[0][0];
+      if (data[0][1]) detectedSource = data[0][1];
+    } else if (typeof data[0] === 'string') {
+      translatedText = data[0];
+    }
+  }
+
+  if (!translatedText) {
+    throw new Error('Could not parse translation result from Chrome client');
+  }
+
+  return {
+    translatedText,
+    detectedSource: detectedSource === 'auto' ? 'unknown' : detectedSource,
+    provider: 'Google Free Engine (High Speed)'
+  };
+}
+
+/**
+ * Helper 2: Google GTX Web Endpoint (Secondary)
+ */
+async function translateWithGoogleGTX(text, sourceLang, targetLang) {
   const sl = sourceLang === 'auto' ? 'auto' : sourceLang;
   const tl = targetLang;
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`;
 
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Referer': 'https://translate.google.com/'
     }
   });
 
   if (!response.ok) {
-    throw new Error(`Google Web Translation responded with status ${response.status}`);
+    throw new Error(`Google GTX responded with status ${response.status}`);
   }
 
   const data = await response.json();
-  // data format: [[[translated_part, original_part, ...], ...], null, detected_language]
   if (!data || !Array.isArray(data[0])) {
-    throw new Error('Unexpected translation response format');
+    throw new Error('Unexpected translation response format from GTX');
   }
 
   const translatedText = data[0].map(part => part[0]).filter(Boolean).join('');
@@ -109,12 +154,12 @@ async function translateWithGoogleFree(text, sourceLang, targetLang) {
   return {
     translatedText,
     detectedSource,
-    provider: 'Free Translation Engine'
+    provider: 'Google Web Engine'
   };
 }
 
 /**
- * Helper: Translate using MyMemory Free API (fallback)
+ * Helper 3: MyMemory Free API (Tertiary fallback)
  */
 async function translateWithMyMemory(text, sourceLang, targetLang) {
   const sl = sourceLang === 'auto' ? 'autodetect' : sourceLang;
@@ -132,6 +177,39 @@ async function translateWithMyMemory(text, sourceLang, targetLang) {
     detectedSource: data.responseData.detectedLanguage || sourceLang,
     provider: 'MyMemory API'
   };
+}
+
+/**
+ * Robust Multi-Engine Free Translator Orchestrator
+ */
+async function translateFreeMultiEngine(text, sourceLang, targetLang) {
+  const errors = [];
+
+  // Try 1: Google Chrome Client (Most stable, avoids 429)
+  try {
+    return await translateWithGoogleChromeClient(text, sourceLang, targetLang);
+  } catch (err1) {
+    console.warn('Chrome Client failed:', err1.message);
+    errors.push(err1.message);
+  }
+
+  // Try 2: Google GTX
+  try {
+    return await translateWithGoogleGTX(text, sourceLang, targetLang);
+  } catch (err2) {
+    console.warn('Google GTX failed:', err2.message);
+    errors.push(err2.message);
+  }
+
+  // Try 3: MyMemory
+  try {
+    return await translateWithMyMemory(text, sourceLang, targetLang);
+  } catch (err3) {
+    console.warn('MyMemory failed:', err3.message);
+    errors.push(err3.message);
+  }
+
+  throw new Error(`Translation services temporarily unavailable (${errors.join(', ')}). Please try again in a few moments.`);
 }
 
 /**
@@ -211,20 +289,11 @@ app.post('/api/translate', async (req, res) => {
         }
         // Fallback to free engine if server's env key failed
         console.log('Falling back to free translation engine...');
-        result = await translateWithGoogleFree(trimmedText, sourceLang, targetLang);
+        result = await translateFreeMultiEngine(trimmedText, sourceLang, targetLang);
       }
     } else {
-      // Use free translation engines with fallback
-      try {
-        result = await translateWithGoogleFree(trimmedText, sourceLang, targetLang);
-      } catch (err1) {
-        console.warn('Free Google endpoint failed, trying MyMemory:', err1.message);
-        try {
-          result = await translateWithMyMemory(trimmedText, sourceLang, targetLang);
-        } catch (err2) {
-          throw new Error(`Translation services unavailable. Error: ${err1.message}`);
-        }
-      }
+      // Use free multi-engine translator with zero 429 rate limit
+      result = await translateFreeMultiEngine(trimmedText, sourceLang, targetLang);
     }
 
     return res.json({
