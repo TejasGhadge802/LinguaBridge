@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaBridge - Modern Language Translation Tool</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- FontAwesome / Lucide icons via CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-indigo-50/40 to-slate-100 min-h-screen text-slate-800 antialiased flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+          <i class="fa-solid fa-language text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-violet-700 bg-clip-text text-transparent">LinguaBridge</h1>
+          <p class="text-xs text-slate-500 hidden sm:block">Fast, Accurate Multi-Language Translation with Speech & Clipboard</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="settingsBtn" title="API Key Settings" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/70 rounded-lg transition-all flex items-center gap-1.5 border border-slate-200">
+          <i class="fa-solid fa-gear"></i>
+          <span>API Settings</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col justify-center">
+
+    <!-- Global Alert Box -->
+    <div id="errorAlert" class="hidden mb-4 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 flex items-start justify-between shadow-sm transition-all duration-300">
+      <div class="flex items-start gap-3">
+        <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5 text-lg"></i>
+        <div>
+          <h4 class="font-semibold text-sm" id="errorTitle">Translation Error</h4>
+          <p class="text-sm text-red-600 mt-0.5" id="errorMessage">Something went wrong.</p>
+        </div>
+      </div>
+      <button id="closeAlertBtn" class="text-red-400 hover:text-red-600 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Translation Card -->
+    <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 overflow-hidden flex flex-col">
+
+      <!-- Language Selection Toolbar -->
+      <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 bg-slate-50/70 border-b border-slate-200 text-sm">
+        
+        <!-- Source Language Controls -->
+        <div class="p-3.5 flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center gap-1.5 flex-wrap flex-1" id="sourceQuickTabs">
+            <button data-lang="auto" class="lang-tab active px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all">
+              <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Auto Detect
+            </button>
+            <button data-lang="en" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all">English</button>
+            <button data-lang="hi" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all">Hindi (हिन्दी)</button>
+            <button data-lang="mr" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all">Marathi (मराठी)</button>
+          </div>
+          <div class="relative min-w-[140px]">
+            <select id="sourceLangSelect" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-lg py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer">
+              <option value="auto">Auto Detect</option>
+              <!-- Populated by JS -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Target Language Controls -->
+        <div class="p-3.5 flex items-center justify-between gap-2 flex-wrap">
+          <div class="flex items-center gap-1.5 flex-wrap flex-1" id="targetQuickTabs">
+            <button data-lang="hi" class="lang-tab active px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all">Hindi (हिन्दी)</button>
+            <button data-lang="mr" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all">Marathi (मराठी)</button>
+            <button data-lang="en" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all">English</button>
+            <button data-lang="es" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all">Spanish</button>
+          </div>
+          <div class="relative min-w-[140px]">
+            <select id="targetLangSelect" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-lg py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Text Input & Output Panels -->
+      <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 min-h-[300px] sm:min-h-[340px]">
+
+        <!-- Source Text Box Area -->
+        <div class="p-4 sm:p-5 flex flex-col justify-between relative group">
+          <div class="flex-1 flex flex-col">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span id="detectedLangBadge" class="hidden text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-md">
+                <i class="fa-solid fa-circle-check mr-1"></i>Detected: <span id="detectedLangName">English</span>
+              </span>
+              <button id="clearSourceBtn" title="Clear text" class="ml-auto text-slate-400 hover:text-slate-600 hover:bg-slate-100 px-2 py-0.5 rounded transition-all opacity-0 group-hover:opacity-100">
+                <i class="fa-solid fa-xmark mr-1"></i>Clear
+              </button>
+            </div>
+            <textarea id="sourceText" rows="8" placeholder="Enter text to translate here... (e.g., 'Hello, how are you?')" class="w-full flex-1 resize-none border-0 focus:ring-0 p-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg focus:outline-none leading-relaxed custom-scrollbar"></textarea>
+          </div>
+
+          <!-- Source Footer Actions -->
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-slate-500">
+            <div class="flex items-center space-x-1">
+              <button id="listenSourceBtn" title="Listen to original text" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <button id="pasteBtn" title="Paste from clipboard" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all">
+                <i class="fa-regular fa-paste"></i>
+              </button>
+            </div>
+            <div class="text-xs text-slate-400">
+              <span id="charCount">0</span> / 5,000
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Text Box Area -->
+        <div class="p-4 sm:p-5 flex flex-col justify-between bg-slate-50/30 relative">
+          <div class="flex-1 flex flex-col relative">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span id="providerBadge" class="text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                Ready
+              </span>
+            </div>
+
+            <!-- Loading overlay inside output box -->
+            <div id="outputLoader" class="hidden absolute inset-0 bg-white/70 backdrop-blur-[1px] flex flex-col items-center justify-center rounded-lg z-10 transition-all">
+              <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
+              <span class="text-sm font-semibold text-indigo-700 animate-pulse">Translating...</span>
+            </div>
+
+            <textarea id="targetText" rows="8" readonly placeholder="Translated text will appear here..." class="w-full flex-1 resize-none border-0 focus:ring-0 p-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg focus:outline-none leading-relaxed bg-transparent custom-scrollbar"></textarea>
+          </div>
+
+          <!-- Target Footer Actions -->
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-slate-500">
+            <div class="flex items-center space-x-2">
+              <!-- Listen Button 🔊 -->
+              <button id="listenTargetBtn" title="Read translated text aloud" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:text-indigo-600 transition-all shadow-sm">
+                <i id="listenTargetIcon" class="fa-solid fa-volume-high text-indigo-600"></i>
+                <span id="listenTargetLabel">Listen</span>
+              </button>
+
+              <!-- Copy Button 📋 -->
+              <button id="copyTargetBtn" title="Copy translation to clipboard" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:text-indigo-600 transition-all shadow-sm">
+                <i id="copyTargetIcon" class="fa-regular fa-copy text-indigo-600"></i>
+                <span id="copyTargetLabel">Copy</span>
+              </button>
+            </div>
+
+            <div class="text-xs text-slate-400">
+              <span id="targetCharCount">0</span> chars
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer with Swap and Translate Button -->
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <!-- Swap Languages Button -->
+          <button id="swapLanguagesBtn" title="Swap languages" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 text-sm font-medium transition-all shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-arrow-right-arrow-left transition-transform duration-300" id="swapIcon"></i>
+            <span class="text-xs font-semibold">Swap Languages</span>
+          </button>
+          <span class="text-xs text-slate-400 hidden lg:inline">Tip: Press <kbd class="px-1.5 py-0.5 bg-slate-200/80 rounded text-[11px] font-mono text-slate-700">Ctrl + Enter</kbd> to translate</span>
+        </div>
+
+        <!-- Primary Translate Button -->
+        <button id="translateBtn" class="w-full sm:w-auto px-7 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2 min-w-[160px]">
+          <i id="translateBtnIcon" class="fa-solid fa-language text-base"></i>
+          <span id="translateBtnText">Translate</span>
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-slate-200 py-4 text-center text-xs text-slate-400 bg-white/50">
+    <p>LinguaBridge &bull; Supports 25+ Languages &bull; Built with HTML, Tailwind CSS, Web Speech API & Express</p>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700 text-sm">
+    <div id="toastIconContainer" class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+      <i id="toastIcon" class="fa-solid fa-check"></i>
+    </div>
+    <span id="toastMessage" class="font-medium">Copied successfully!</span>
+  </div>
+
+  <!-- API Key Settings Modal -->
+  <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 transform transition-all">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-indigo-600"></i>
+          Translation API Settings
+        </h3>
+        <button id="closeSettingsBtn" class="text-slate-400 hover:text-slate-600 p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-4 text-sm">
+        <p class="text-slate-600 text-xs leading-relaxed">
+          By default, LinguaBridge uses the built-in free translation engine. If you have your own <strong>Google Cloud Translation API Key</strong>, you can supply it below.
+        </p>
+
+        <div>
+          <label for="apiKeyInput" class="block text-xs font-semibold text-slate-700 uppercase mb-1.5">
+            Google Cloud API Key (Optional)
+          </label>
+          <div class="relative">
+            <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono">
+            <button type="button" id="toggleApiKeyVisBtn" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+              <i class="fa-solid fa-eye" id="toggleApiKeyEye"></i>
+            </button>
+          </div>
+          <span class="text-[11px] text-slate-400 mt-1 block">Your key is stored locally in your browser and used only for requests.</span>
+        </div>
+
+        <div class="bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-indigo-800">
+          <div class="font-semibold flex items-center gap-1.5 mb-1">
+            <i class="fa-solid fa-shield-halved text-indigo-600"></i>
+            Zero-Config Free Fallback
+          </div>
+          Leave this empty to continue using the free high-accuracy translation engine without needing a paid key!
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+        <button id="cancelSettingsBtn" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+        <button id="saveSettingsBtn" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
