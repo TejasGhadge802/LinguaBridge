@@ -4,7 +4,6 @@ const state = {
   targetLang: 'hi',
   isTranslating: false,
   isSpeaking: false,
-  apiKey: localStorage.getItem('lingua_api_key') || '',
   languages: [
     { code: 'en', name: 'English', nativeName: 'English', speechLocale: 'en-US' },
     { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', speechLocale: 'hi-IN' },
@@ -71,27 +70,14 @@ const toast = document.getElementById('toastNotification');
 const toastMessage = document.getElementById('toastMessage');
 const toastIcon = document.getElementById('toastIcon');
 
-// Settings Modal DOM
-const settingsBtn = document.getElementById('settingsBtn');
-const settingsModal = document.getElementById('settingsModal');
-const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
-const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-const apiKeyInput = document.getElementById('apiKeyInput');
-const toggleApiKeyVisBtn = document.getElementById('toggleApiKeyVisBtn');
-const toggleApiKeyEye = document.getElementById('toggleApiKeyEye');
+// Clear any old stored key
+try { localStorage.removeItem('lingua_api_key'); } catch(e) {}
 
 // --- Initialization ---
 function init() {
   populateLanguageSelects();
   setupEventListeners();
   syncLanguageSelections();
-
-  // Load API key in input if present
-  if (state.apiKey) {
-    apiKeyInput.value = state.apiKey;
-    updateProviderBadge('Custom API Key Configured');
-  }
 
   // Pre-load Web Speech API voices
   if ('speechSynthesis' in window) {
@@ -313,39 +299,6 @@ function setupEventListeners() {
   // Close Error Alert
   closeAlertBtn.addEventListener('click', hideError);
 
-  // Settings Modal Handlers
-  settingsBtn.addEventListener('click', () => {
-    apiKeyInput.value = state.apiKey;
-    settingsModal.classList.remove('hidden');
-  });
-
-  closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
-  cancelSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
-
-  saveSettingsBtn.addEventListener('click', () => {
-    const key = apiKeyInput.value.trim();
-    state.apiKey = key;
-    if (key) {
-      localStorage.setItem('lingua_api_key', key);
-      updateProviderBadge('Custom Google API Key');
-      showToast('API Key saved successfully!', 'success');
-    } else {
-      localStorage.removeItem('lingua_api_key');
-      updateProviderBadge('Ready');
-      showToast('Using zero-config free translation engine', 'info');
-    }
-    settingsModal.classList.add('hidden');
-  });
-
-  toggleApiKeyVisBtn.addEventListener('click', () => {
-    if (apiKeyInput.type === 'password') {
-      apiKeyInput.type = 'text';
-      toggleApiKeyEye.className = 'fa-solid fa-eye-slash';
-    } else {
-      apiKeyInput.type = 'password';
-      toggleApiKeyEye.className = 'fa-solid fa-eye';
-    }
-  });
 }
 
 function setSourceLanguage(langCode) {
@@ -445,8 +398,7 @@ async function handleTranslation() {
     const payload = {
       text: rawText,
       sourceLang: state.sourceLang,
-      targetLang: state.targetLang,
-      apiKey: state.apiKey || undefined
+      targetLang: state.targetLang
     };
 
     const response = await fetch('/api/translate', {

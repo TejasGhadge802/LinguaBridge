@@ -46,38 +46,6 @@ app.get('/api/languages', (req, res) => {
   res.json({ languages: SUPPORTED_LANGUAGES });
 });
 
-/**
- * Helper: Translate using Google Cloud Translation API (when API Key is available)
- */
-async function translateWithGoogleCloud(text, sourceLang, targetLang, apiKey) {
-  const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
-  const payload = {
-    q: text,
-    target: targetLang,
-    format: 'text'
-  };
-  if (sourceLang && sourceLang !== 'auto') {
-    payload.source = sourceLang;
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error?.message || `Google Cloud API error (${response.status})`);
-  }
-
-  const translation = data.data.translations[0];
-  return {
-    translatedText: translation.translatedText,
-    detectedSource: translation.detectedSourceLanguage || sourceLang,
-    provider: 'Google Cloud Translation'
-  };
-}
 
 /**
  * Helper 1: Google Chrome Client Endpoint (Most reliable, zero 429 rate limits)
@@ -212,47 +180,10 @@ async function translateFreeMultiEngine(text, sourceLang, targetLang) {
   throw new Error(`Translation services temporarily unavailable (${errors.join(', ')}). Please try again in a few moments.`);
 }
 
-/**
- * Helper: Translate using RapidAPI Google Translator
- */
-async function translateWithRapidAPI(text, sourceLang, targetLang, apiKey) {
-  const url = 'https://google-translator9.p.rapidapi.com/v2';
-  const payload = {
-    q: text,
-    target: targetLang,
-    format: 'text'
-  };
-  if (sourceLang && sourceLang !== 'auto') {
-    payload.source = sourceLang;
-  }
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'x-rapidapi-key': apiKey,
-      'x-rapidapi-host': 'google-translator9.p.rapidapi.com',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || `RapidAPI error (${response.status})`);
-  }
-
-  const translation = data.data.translations[0];
-  return {
-    translatedText: translation.translatedText,
-    detectedSource: translation.detectedSourceLanguage || sourceLang,
-    provider: 'RapidAPI Google Translator'
-  };
-}
-
-// Endpoint: Translate
+// Endpoint: Translate (100% Free & Unlimited)
 app.post('/api/translate', async (req, res) => {
   try {
-    const { text, sourceLang = 'auto', targetLang, apiKey } = req.body;
+    const { text, sourceLang = 'auto', targetLang } = req.body;
 
     // Validate inputs
     if (!text || typeof text !== 'string' || text.trim() === '') {
@@ -268,33 +199,8 @@ app.post('/api/translate', async (req, res) => {
       return res.status(400).json({ error: 'Text exceeds maximum limit of 5,000 characters.' });
     }
 
-    // Determine API Key priority
-    const effectiveApiKey = apiKey || process.env.GOOGLE_TRANSLATE_API_KEY || process.env.RAPIDAPI_KEY;
-    const isRapidApiKey = process.env.RAPIDAPI_KEY || (apiKey && !apiKey.startsWith('AIzaSy'));
-
-    let result;
-    if (effectiveApiKey) {
-      try {
-        if (isRapidApiKey) {
-          result = await translateWithRapidAPI(trimmedText, sourceLang, targetLang, effectiveApiKey);
-        } else {
-          result = await translateWithGoogleCloud(trimmedText, sourceLang, targetLang, effectiveApiKey);
-        }
-      } catch (keyErr) {
-        console.warn('API call failed with provided key:', keyErr.message);
-        if (apiKey) {
-          return res.status(401).json({
-            error: `API Key error: ${keyErr.message}. Check your API key.`
-          });
-        }
-        // Fallback to free engine if server's env key failed
-        console.log('Falling back to free translation engine...');
-        result = await translateFreeMultiEngine(trimmedText, sourceLang, targetLang);
-      }
-    } else {
-      // Use free multi-engine translator with zero 429 rate limit
-      result = await translateFreeMultiEngine(trimmedText, sourceLang, targetLang);
-    }
+    // Translate using multi-engine free translator
+    const result = await translateFreeMultiEngine(trimmedText, sourceLang, targetLang);
 
     return res.json({
       success: true,

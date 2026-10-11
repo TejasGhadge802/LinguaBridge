@@ -43,9 +43,9 @@ A clean, responsive, high-performance Language Translation Tool built with **HTM
    - Smooth 180° animated swap button to reverse source and target languages and text.
    - Quick clear button to wipe text and reset states.
 
-10. **Dual Translation Engine Support**:
-    - **Zero-Config Free Engine**: Works out-of-the-box without requiring any credentials or paid billing.
-    - **Google Cloud Translation API**: Optionally provide your Google Cloud Translation API key via `.env` or directly through the in-app **API Settings** modal.
+10. **100% Free & Unlimited**:
+    - Works completely out-of-the-box using high-speed multi-engine translation.
+    - Zero API keys, zero signup, and zero credit card required.
 
 ---
 
@@ -75,21 +75,9 @@ Language Translation Tool/
 │   ├── index.html       # Responsive Tailwind CSS layout & UI elements
 │   ├── style.css        # Custom styles, animations, scrollbars, and speech waves
 │   └── app.js           # Client-side state, Speech & Clipboard APIs, event handling
-├── server.js            # Express backend with translation endpoints & API proxying
+├── server.js            # Express backend with high-speed multi-engine translation
 ├── package.json         # Project metadata and dependencies
-├── .env.example         # Environment variables template
+├── .gitignore           # Git ignore configuration
 └── README.md            # Documentation
 ```
-
----
-
-## 🔑 Optional Google Cloud API Key Configuration
-
-If you wish to use an official Google Cloud Translation API key:
-- **Option A (In-app)**: Click the **API Settings** button in the header, paste your key, and click **Save Preferences**.
-- **Option B (Environment file)**: Create a `.env` file from `.env.example`:
-  ```env
-  PORT=3000
-  GOOGLE_TRANSLATE_API_KEY=your_google_cloud_api_key_here
-  ```
 

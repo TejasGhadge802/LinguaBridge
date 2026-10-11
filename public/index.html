@@ -42,10 +42,10 @@
         </div>
       </div>
       <div class="flex items-center space-x-2">
-        <button id="settingsBtn" title="API Key Settings" class="px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/70 rounded-lg transition-all flex items-center gap-1.5 border border-slate-200">
-          <i class="fa-solid fa-gear"></i>
-          <span>API Settings</span>
-        </button>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Free & Unlimited
+        </span>
       </div>
     </div>
   </header>
@@ -216,53 +216,6 @@
       <i id="toastIcon" class="fa-solid fa-check"></i>
     </div>
     <span id="toastMessage" class="font-medium">Copied successfully!</span>
-  </div>
-
-  <!-- API Key Settings Modal -->
-  <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 transform transition-all">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-indigo-600"></i>
-          Translation API Settings
-        </h3>
-        <button id="closeSettingsBtn" class="text-slate-400 hover:text-slate-600 p-1">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="py-4 space-y-4 text-sm">
-        <p class="text-slate-600 text-xs leading-relaxed">
-          By default, LinguaBridge uses the built-in free translation engine. If you have your own <strong>Google Cloud API Key</strong> or <strong>RapidAPI Key</strong>, you can supply it below.
-        </p>
-
-        <div>
-          <label for="apiKeyInput" class="block text-xs font-semibold text-slate-700 uppercase mb-1.5">
-            API Key (Google Cloud or RapidAPI)
-          </label>
-          <div class="relative">
-            <input type="password" id="apiKeyInput" placeholder="AIzaSy... or RapidAPI Key" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono">
-            <button type="button" id="toggleApiKeyVisBtn" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
-              <i class="fa-solid fa-eye" id="toggleApiKeyEye"></i>
-            </button>
-          </div>
-          <span class="text-[11px] text-slate-400 mt-1 block">Your key is stored locally in your browser and used only for requests.</span>
-        </div>
-
-        <div class="bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-xs text-indigo-800">
-          <div class="font-semibold flex items-center gap-1.5 mb-1">
-            <i class="fa-solid fa-shield-halved text-indigo-600"></i>
-            Zero-Config Free Fallback
-          </div>
-          Leave this empty to continue using the free high-accuracy translation engine without needing a paid key!
-        </div>
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-        <button id="cancelSettingsBtn" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-        <button id="saveSettingsBtn" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm">Save Preferences</button>
-      </div>
-    </div>
   </div>
 
   <script src="app.js"></script>
