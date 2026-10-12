@@ -2,6 +2,8 @@
 
 A clean, responsive, high-performance Language Translation Tool built with **HTML5**, **Tailwind CSS**, and **JavaScript**, powered by a lightweight **Node.js & Express** backend.
 
+🚀 **Live Demo:** [https://lingua-bridge-sigma.vercel.app/](https://lingua-bridge-sigma.vercel.app/)
+
 ---
 
 ## ✨ Features
@@ -71,11 +73,15 @@ Open `http://localhost:3000` in Google Chrome, Microsoft Edge, Brave, or Firefox
 
 ```
 Language Translation Tool/
+├── api/
+│   └── index.js         # Vercel serverless function entrypoint
 ├── public/
+│   ├── favicon.svg      # Custom SVG vector favicon
 │   ├── index.html       # Responsive Tailwind CSS layout & UI elements
 │   ├── style.css        # Custom styles, animations, scrollbars, and speech waves
 │   └── app.js           # Client-side state, Speech & Clipboard APIs, event handling
 ├── server.js            # Express backend with high-speed multi-engine translation
+├── vercel.json          # Vercel serverless rewrite configuration
 ├── package.json         # Project metadata and dependencies
 ├── .gitignore           # Git ignore configuration
 └── README.md            # Documentation
