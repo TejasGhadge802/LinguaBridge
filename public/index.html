@@ -47,15 +47,15 @@
   </header>
 
   <!-- Main Container -->
-  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col justify-center">
+  <main class="flex-1 max-w-6xl w-full mx-auto px-2.5 sm:px-6 py-3 sm:py-8 flex flex-col justify-center">
 
     <!-- Global Alert Box -->
-    <div id="errorAlert" class="hidden mb-4 p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 flex items-start justify-between shadow-sm transition-all duration-300">
-      <div class="flex items-start gap-3">
-        <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5 text-lg"></i>
+    <div id="errorAlert" class="hidden mb-3 p-3.5 rounded-xl border border-red-200 bg-red-50 text-red-700 flex items-start justify-between shadow-sm transition-all duration-300">
+      <div class="flex items-start gap-2.5">
+        <i class="fa-solid fa-circle-exclamation text-red-500 mt-0.5 text-base"></i>
         <div>
-          <h4 class="font-semibold text-sm" id="errorTitle">Translation Error</h4>
-          <p class="text-sm text-red-600 mt-0.5" id="errorMessage">Something went wrong.</p>
+          <h4 class="font-semibold text-xs sm:text-sm" id="errorTitle">Translation Error</h4>
+          <p class="text-xs sm:text-sm text-red-600 mt-0.5" id="errorMessage">Something went wrong.</p>
         </div>
       </div>
       <button id="closeAlertBtn" class="text-red-400 hover:text-red-600 p-1">
@@ -72,45 +72,45 @@
         <!-- Column 1: Source Language + Source Text Area -->
         <div class="flex flex-col">
           <!-- 1. Source Language Controls -->
-          <div class="p-3 sm:p-3.5 flex items-center justify-between gap-2 flex-wrap bg-slate-50/70 border-b border-slate-200 text-sm">
-            <div class="flex items-center gap-1.5 flex-nowrap sm:flex-wrap overflow-x-auto max-w-full pb-1 sm:pb-0 flex-1 custom-scrollbar" id="sourceQuickTabs">
-              <button data-lang="auto" class="lang-tab active px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all whitespace-nowrap">
-                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Auto Detect
-              </button>
-              <button data-lang="en" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap">English</button>
-              <button data-lang="hi" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap">Hindi (हिन्दी)</button>
-              <button data-lang="mr" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap">Marathi (मराठी)</button>
-            </div>
-            <div class="relative min-w-[130px] sm:min-w-[140px] shrink-0">
-              <select id="sourceLangSelect" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-lg py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer">
-                <option value="auto">Auto Detect</option>
-                <!-- Populated by JS -->
-              </select>
+          <div class="p-2.5 sm:p-3.5 bg-slate-50/80 border-b border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="sourceQuickTabs">
+                <button data-lang="auto" class="lang-tab active px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all whitespace-nowrap shrink-0 flex items-center gap-1">
+                  <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>Auto Detect
+                </button>
+                <button data-lang="en" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap shrink-0">English</button>
+                <button data-lang="hi" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap shrink-0">Hindi</button>
+                <button data-lang="mr" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap shrink-0">Marathi</button>
+              </div>
+              <div class="relative w-full sm:w-auto sm:min-w-[140px] shrink-0">
+                <select id="sourceLangSelect" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-lg py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer shadow-xs">
+                  <option value="auto">✨ Auto Detect</option>
+                  <!-- Populated by JS -->
+                </select>
+              </div>
             </div>
           </div>
 
           <!-- 2. Source Text Box Area -->
-          <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between relative group min-h-[220px] sm:min-h-[300px]">
+          <div class="p-3.5 sm:p-5 flex-1 flex flex-col justify-between relative group">
             <div class="flex-1 flex flex-col">
-              <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-                <span id="detectedLangBadge" class="hidden text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
-                  <i class="fa-solid fa-circle-check mr-1"></i>Detected: <span id="detectedLangName">English</span>
-                </span>
-                <button id="clearSourceBtn" title="Clear text" class="ml-auto text-slate-400 hover:text-slate-600 hover:bg-slate-100 px-2 py-0.5 rounded transition-all opacity-0 group-hover:opacity-100">
-                  <i class="fa-solid fa-xmark mr-1"></i>Clear
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5 min-h-[20px]">
+                <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Source Text</span>
+                <button id="clearSourceBtn" title="Clear text" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 px-2 py-0.5 rounded transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex items-center gap-1 text-xs">
+                  <i class="fa-solid fa-xmark text-xs"></i>Clear
                 </button>
               </div>
-              <textarea id="sourceText" rows="7" placeholder="Enter text to translate here... (e.g., 'Hello, how are you?')" class="w-full flex-1 resize-none border-0 focus:ring-0 p-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg focus:outline-none leading-relaxed custom-scrollbar"></textarea>
+              <textarea id="sourceText" rows="4" placeholder="Enter text to translate here... (e.g., 'Hello, how are you?')" class="w-full flex-1 resize-none border-0 focus:ring-0 p-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg focus:outline-none leading-relaxed custom-scrollbar min-h-[120px] sm:min-h-[220px]"></textarea>
             </div>
 
             <!-- Source Footer Actions -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-slate-500">
+            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-slate-500">
               <div class="flex items-center space-x-1">
-                <button id="listenSourceBtn" title="Listen to original text" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all">
-                  <i class="fa-solid fa-volume-high"></i>
+                <button id="listenSourceBtn" title="Listen to original text" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all">
+                  <i class="fa-solid fa-volume-high text-sm"></i>
                 </button>
-                <button id="pasteBtn" title="Paste from clipboard" class="w-9 h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all">
-                  <i class="fa-regular fa-paste"></i>
+                <button id="pasteBtn" title="Paste from clipboard" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition-all">
+                  <i class="fa-regular fa-paste text-sm"></i>
                 </button>
               </div>
               <div class="text-xs text-slate-400">
@@ -123,49 +123,56 @@
         <!-- Column 2: Target / Detected Language + Target Text Area -->
         <div class="flex flex-col bg-slate-50/30">
           <!-- 3. Target Language Controls -->
-          <div class="p-3 sm:p-3.5 flex items-center justify-between gap-2 flex-wrap bg-slate-50/70 border-b border-slate-200 text-sm">
-            <div class="flex items-center gap-1.5 flex-nowrap sm:flex-wrap overflow-x-auto max-w-full pb-1 sm:pb-0 flex-1 custom-scrollbar" id="targetQuickTabs">
-              <button data-lang="hi" class="lang-tab active px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all whitespace-nowrap">Hindi (हिन्दी)</button>
-              <button data-lang="mr" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap">Marathi (मराठी)</button>
-              <button data-lang="en" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap">English</button>
-              <button data-lang="es" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap">Spanish</button>
-            </div>
-            <div class="relative min-w-[130px] sm:min-w-[140px] shrink-0">
-              <select id="targetLangSelect" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-lg py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer">
-                <!-- Populated by JS -->
-              </select>
+          <div class="p-2.5 sm:p-3.5 bg-slate-50/80 border-b border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="targetQuickTabs">
+                <button data-lang="hi" class="lang-tab active px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-sm transition-all whitespace-nowrap shrink-0">Hindi</button>
+                <button data-lang="mr" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap shrink-0">Marathi</button>
+                <button data-lang="en" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap shrink-0">English</button>
+                <button data-lang="es" class="lang-tab px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200/70 transition-all whitespace-nowrap shrink-0">Spanish</button>
+              </div>
+              <div class="relative w-full sm:w-auto sm:min-w-[140px] shrink-0">
+                <select id="targetLangSelect" class="w-full text-xs font-medium bg-white border border-slate-300 rounded-lg py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer shadow-xs">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
             </div>
           </div>
 
-          <!-- 4. Target Text Box Area -->
-          <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between relative min-h-[220px] sm:min-h-[300px]">
+          <!-- 4. Target Text Box Area with Prominent Detected Language Badge -->
+          <div class="p-3.5 sm:p-5 flex-1 flex flex-col justify-between relative">
             <div class="flex-1 flex flex-col relative">
-              <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-                <span id="providerBadge" class="text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
+              <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5 min-h-[24px]">
+                <!-- Detected Language Badge (Prominently displayed above translated text) -->
+                <span id="detectedLangBadge" class="hidden text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md items-center gap-1">
+                  <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 text-[10px]"></i>
+                  <span>Detected: <strong id="detectedLangName" class="font-bold underline">English</strong></span>
+                </span>
+                <span id="providerBadge" class="text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md font-mono text-[11px] ml-auto">
                   Ready
                 </span>
               </div>
 
               <!-- Loading overlay inside output box -->
               <div id="outputLoader" class="hidden absolute inset-0 bg-white/70 backdrop-blur-[1px] flex flex-col items-center justify-center rounded-lg z-10 transition-all">
-                <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
-                <span class="text-sm font-semibold text-indigo-700 animate-pulse">Translating...</span>
+                <div class="w-9 h-9 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-2"></div>
+                <span class="text-xs sm:text-sm font-semibold text-indigo-700 animate-pulse">Translating...</span>
               </div>
 
-              <textarea id="targetText" rows="7" readonly placeholder="Translated text will appear here..." class="w-full flex-1 resize-none border-0 focus:ring-0 p-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg focus:outline-none leading-relaxed bg-transparent custom-scrollbar"></textarea>
+              <textarea id="targetText" rows="4" readonly placeholder="Translated text will appear here..." class="w-full flex-1 resize-none border-0 focus:ring-0 p-0 text-slate-800 placeholder-slate-400 text-base sm:text-lg focus:outline-none leading-relaxed bg-transparent custom-scrollbar min-h-[120px] sm:min-h-[220px]"></textarea>
             </div>
 
             <!-- Target Footer Actions -->
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-slate-500">
-              <div class="flex items-center space-x-2">
+            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between text-slate-500">
+              <div class="flex items-center space-x-1.5">
                 <!-- Listen Button 🔊 -->
-                <button id="listenTargetBtn" title="Read translated text aloud" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:text-indigo-600 transition-all shadow-sm">
+                <button id="listenTargetBtn" title="Read translated text aloud" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:text-indigo-600 transition-all shadow-xs">
                   <i id="listenTargetIcon" class="fa-solid fa-volume-high text-indigo-600"></i>
                   <span id="listenTargetLabel">Listen</span>
                 </button>
 
                 <!-- Copy Button 📋 -->
-                <button id="copyTargetBtn" title="Copy translation to clipboard" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:text-indigo-600 transition-all shadow-sm">
+                <button id="copyTargetBtn" title="Copy translation to clipboard" class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-700 hover:text-indigo-600 transition-all shadow-xs">
                   <i id="copyTargetIcon" class="fa-regular fa-copy text-indigo-600"></i>
                   <span id="copyTargetLabel">Copy</span>
                 </button>
@@ -180,19 +187,19 @@
 
       </div>
 
-      <!-- Action Footer with Swap and Translate Button -->
-      <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <!-- Swap Languages Button -->
-          <button id="swapLanguagesBtn" title="Swap languages" class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 text-sm font-medium transition-all shadow-sm flex items-center gap-2">
-            <i class="fa-solid fa-arrow-right-arrow-left transition-transform duration-300" id="swapIcon"></i>
-            <span class="text-xs font-semibold">Swap Languages</span>
-          </button>
-          <span class="text-xs text-slate-400 hidden lg:inline">Tip: Press <kbd class="px-1.5 py-0.5 bg-slate-200/80 rounded text-[11px] font-mono text-slate-700">Ctrl + Enter</kbd> to translate</span>
-        </div>
+      <!-- Action Footer with Swap and Translate Button (Clean side-by-side on mobile) -->
+      <div class="p-3 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2.5">
+        <!-- Swap Languages Button -->
+        <button id="swapLanguagesBtn" title="Swap languages" class="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 text-xs sm:text-sm font-semibold transition-all shadow-xs flex items-center gap-1.5 shrink-0">
+          <i class="fa-solid fa-arrow-right-arrow-left transition-transform duration-300" id="swapIcon"></i>
+          <span class="hidden sm:inline">Swap Languages</span>
+          <span class="sm:hidden">Swap</span>
+        </button>
+
+        <span class="text-xs text-slate-400 hidden lg:inline">Tip: Press <kbd class="px-1.5 py-0.5 bg-slate-200/80 rounded text-[11px] font-mono text-slate-700">Ctrl + Enter</kbd> to translate</span>
 
         <!-- Primary Translate Button -->
-        <button id="translateBtn" class="w-full sm:w-auto px-7 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2 min-w-[160px]">
+        <button id="translateBtn" class="flex-1 sm:flex-initial sm:min-w-[170px] px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-sm shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-300 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
           <i id="translateBtnIcon" class="fa-solid fa-language text-base"></i>
           <span id="translateBtnText">Translate</span>
         </button>
