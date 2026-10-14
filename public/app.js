@@ -69,12 +69,15 @@ const closeAlertBtn = document.getElementById('closeAlertBtn');
 const toast = document.getElementById('toastNotification');
 const toastMessage = document.getElementById('toastMessage');
 const toastIcon = document.getElementById('toastIcon');
+const themeToggleBtn = document.getElementById('themeToggleBtn');
+const themeToggleIcon = document.getElementById('themeToggleIcon');
 
 // Clear any old stored key
 try { localStorage.removeItem('lingua_api_key'); } catch(e) {}
 
 // --- Initialization ---
 function init() {
+  initTheme();
   populateLanguageSelects();
   setupEventListeners();
   syncLanguageSelections();
@@ -299,6 +302,53 @@ function setupEventListeners() {
   // Close Error Alert
   closeAlertBtn.addEventListener('click', hideError);
 
+  // Theme Toggle Button
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+}
+
+// --- Theme Management ---
+function initTheme() {
+  syncThemeUI();
+
+  // Listen to OS theme changes if user hasn't explicitly set preference
+  try {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', (e) => {
+      const storedTheme = localStorage.getItem('lingua_theme');
+      if (!storedTheme) {
+        if (e.matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        syncThemeUI();
+      }
+    });
+  } catch(e) {}
+}
+
+function syncThemeUI() {
+  const isDark = document.documentElement.classList.contains('dark');
+  if (themeToggleIcon) {
+    if (isDark) {
+      themeToggleIcon.className = 'fa-solid fa-sun text-sm sm:text-base text-amber-400 rotate-0 transition-all duration-300';
+      if (themeToggleBtn) themeToggleBtn.title = 'Switch to Light Mode';
+    } else {
+      themeToggleIcon.className = 'fa-solid fa-moon text-sm sm:text-base text-slate-600 rotate-0 transition-all duration-300';
+      if (themeToggleBtn) themeToggleBtn.title = 'Switch to Dark Mode';
+    }
+  }
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  try {
+    localStorage.setItem('lingua_theme', isDark ? 'dark' : 'light');
+  } catch(e) {}
+  syncThemeUI();
+  showToast(isDark ? 'Dark mode enabled 🌙' : 'Light mode enabled ☀️', 'info');
 }
 
 function setSourceLanguage(langCode) {
